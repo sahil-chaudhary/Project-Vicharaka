@@ -1,8 +1,8 @@
 # Software
 
 Important decisions so far:
-- ROS2 LTS: [Humble Hawksbill](https://docs.ros.org/en/iron/Releases/Release-Humble-Hawksbill.html)
-is the ROS version we have decided to proceed with.
+- ~~ROS2 LTS: [Humble Hawksbill](https://docs.ros.org/en/iron/Releases/Release-Humble-Hawksbill.html)~~
+  ROS1 Latest: [Noetic](http://wiki.ros.org/noetic) is the ROS version we have decided to proceed with.
 
 TODO:
 - Upload minutes for the meeting conducted on August 3.
