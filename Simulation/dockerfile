@@ -1,0 +1,65 @@
+#
+# Made by Sirjan Hansda
+#
+# This image is for those who want do not want to install Linux or the particular version of Linux requred for working in this project.
+# This is a system to caintainerize the entire simulation process.
+# Each instruction in this file generates a new layer that gets pushed to your local image cache
+#
+#
+# Lines preceeded by # are regarded as comments and ignored
+#
+#
+# The line below states we will base our new image on the Latest Official Ubuntu 
+FROM ubuntu:20.04
+#
+# Identify the maintainer of an image
+LABEL maintainer="sirjan.20031231@gmail.com"
+#
+# Update the image to the latest packages
+
+CMD ["/bin/bash"]
+
+RUN echo 'Etc/UTC' > /etc/timezone && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime &&  apt-get update && apt-get install -q -y --no-install-recommends tzdata
+RUN apt-get update && apt-get upgrade -y
+#
+# Install NGINX to test.
+RUN apt-get update && apt-get install -q -y --no-install-recommends dirmngr gnupg2    
+# Expose port 80
+RUN echo "deb http://packages.ros.org/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros1-latest.list
+
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+
+ENV LANG=C.UTF-8
+
+ENV LC_ALL=C.UTF-8
+
+ENV ROS_DISTRO=noetic
+
+RUN apt-get update && apt-get install -y --no-install-recommends ros-noetic-ros-core=1.5.0-1*
+
+RUN apt-get update && apt-get install --no-install-recommends -y build-essential python3-rosdep python3-rosinstall  python3-vcstools  
+
+RUN rosdep init &&   rosdep update --rosdistro $ROS_DISTRO
+
+RUN apt-get update && apt-get install -y --no-install-recommends     ros-noetic-ros-base=1.5.0-1*    
+
+RUN  apt-get update && apt-get install -y --no-install-recommends     ros-noetic-robot=1.5.0-1*   
+
+RUN  apt-get update && apt-get install -y --no-install-recommends     ros-noetic-desktop=1.5.0-1*  
+
+RUN apt-get update && apt-get install -y --no-install-recommends     ros-noetic-desktop-full=1.5.0-1*   git nano
+
+ADD  catkin_ws /
+
+RUN echo "source /etc/ros/noetic/setup.bash" >>  ~/.bashrc
+
+RUN echo "export TURTLEBOT3_MODEL=burger" >>  ~/.bashrc
+
+RUN echo "export /catkin_ws/devel/setup.bash" >>  ~/.bashrc
+
+RUN cd /catkin_ws/ && catkin_make
+
+
+EXPOSE 80
+#
+# Last is the actual command to start up NGINX within our Container
